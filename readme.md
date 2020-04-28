@@ -14,6 +14,11 @@ Install requirements
 pip install -r requirements.txt
 ```
 
+Unzip data
+```shell script
+unzip data/nps-chat.zip
+```
+
 Run demo
 ```shell script
 python hw3/service.py demo
