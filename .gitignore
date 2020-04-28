@@ -1,9 +1,15 @@
-data
+data/10
+data/10.zip
+data/covid_reddit_posts
+data/coronavirus-posts-in-reddit-platform.zip
+data/nps_chat
+data/sample.csv
+
 .idea
 
 *.png
 
-images
+_*
 
 .DS_STORE
 

@@ -135,16 +135,6 @@ def analyze_graph(graph: 'TopicGraph'):
             else:
                 users[node.id]["INS"] += len(ins)
                 users[node.id]["OUTS"] += len(outs)
-            # average_user_sentiment(graph, node)
-
-            # users[node.id] = user
-        #     print(f"\n{node}")
-        #     print(f"INS: {len(ins)}\nOUTS: {len(outs)}")
-        # print(f"\n\n{node}: {graph[node]}")
-    # print(users)
-
-    # print([v for k, v in sorted(users.items(), key=lambda item: item)])
-    # print(users.items())
     centrality = degree_centrality(graph)
     user_stats = []
     for u in [(k, v) for k, v in sorted(users.items(), key=lambda item: item[1]["INS"], reverse=True)]:
@@ -159,34 +149,28 @@ def analyze_graph(graph: 'TopicGraph'):
         for k in centrality.keys():
             if f"{k}" == f"{u[1]['NODE'].id}":
                 u[1]["CENTRALITY_SCORE"] = centrality[k]
-        # print(f"{u[0]}:\t{u[1]}")
         user_stats.append(u)
 
     num_in_edges = float(sum(i[1]["INS"] for i in user_stats))
+
+    """Please don't mind the mess that follows... pay attention to the other, prettier code... 😅"""
 
     for u in user_stats:
         u[1]["EDGE_SCORE"] = float(u[1]["INS"]) / num_in_edges
         u[1]["TOPIC_SCORE"] = float(u[1]["NUM_TOPICS"]) / len(get_all_posts(graph))
         u[1]["AVG_POST_LEN_SCORE"] = float(u[1]["AVG_POST_LEN"]) / sum([l[1]["AVG_POST_LEN"] for l in user_stats])
-
     for u in user_stats:
         _u = u[1]
         influence = avg([_u[score] for score in _u.keys() if "SCORE" in score])
         # weight = float(_u["NUM_POSTS"])/len(get_all_posts(graph))
         _u["RAW_INFLUENCE"] = influence
-
     inorm = sum(i[1]["RAW_INFLUENCE"] for i in user_stats)
-    # print(inorm)
     for u in user_stats:
         _u = u[1]
         _u["INFLUENCE"] = float(_u["RAW_INFLUENCE"]) / inorm
     for i, u in enumerate(sorted(user_stats, key=lambda item: item[1]["INFLUENCE"], reverse=True)):
         _u = u[1]
-        # _u["INFLUENCE"] = float(_u["RAW_INFLUENCE"])/inorm
         _u["RANK"] = i
-        # print(f"{u[0]}:\n\tSENTIMENT: {_u['SENTIMENT']}\n\t"
-        #       f"INFLUENCE: {_u['INFLUENCE']}\n\t"
-        #       f"RANK: {i}")
     return user_stats
 
 
@@ -264,22 +248,6 @@ def get_all_posts(graph):
 
 
 def average_user_sentiment(posts):
-    # sentiment = {"POS": [], "NEG": [], "NEU": []}
-    # sentiment = []
-    # for p in posts:
-    #     scores = SID.polarity_scores(p.text)
-    # print(scores)
-    # sentiment["POS"].append(scores["pos"])
-    # sentiment["NEG"].append(scores["neg"])
-    # sentiment["NEU"].append(scores["neu"])
-    # sentiment.append(scores["compound"])
-
-    # return {"POS": avg(sentiment['POS']),
-    #         "NEG": avg(sentiment['NEG']),
-    #         "NEU": avg(sentiment['NEU'])}
-    # return (-1.0 * avg(sentiment['NEG'])) + (avg(sentiment["POS"])) * avg(sentiment["NEU"])
-
-    # return avg(sentiment)
     return avg([SID.polarity_scores(p.text)["compound"] for p in posts])
 
 
@@ -290,8 +258,6 @@ class User:
     def __init__(self, _user: str, _index: int):
         self._username = _user
         self._id = f"U-{_index}"
-        self._has_post = []  # These should be added as edges
-        self._introduces_topic = []  # These should be added as edges
 
     @property
     def name(self):
@@ -338,7 +304,6 @@ class Post:
         self._posted_by = _post[1]
         self._text = _post[2]
         self._terminals = _post[3]
-        self._introduces_topic = []  # These should be added as edges
 
     @classmethod
     def build(cls, _post, _index, debug=False):
@@ -386,14 +351,6 @@ class Post:
     @terminals.setter
     def terminals(self, value):
         self._terminals = value
-
-    @property
-    def topic(self):
-        return self._introduces_topic
-
-    @topic.setter
-    def topic(self, value):
-        self._introduces_topic = value
 
     def __str__(self):
         return f"{self.id}"

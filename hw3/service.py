@@ -14,7 +14,6 @@ def run(mode: str = "COMPOSITE", filename: str = FILES[-1], wc_display: bool = F
         if _wc_to_file or _wc_display:
             build_wordcloud(_posts, display=_wc_display, to_file=_wc_to_file, filename=f"{_filename.split('.')[0]}.png")
         _s = analyze_graph(_graph)
-        # [row.append(u[1]) for u in s]
         _s = sorted(_s, key=lambda item: item[1]["RANK"])
         for _u in _s:
             _row.append(_u[0])
@@ -65,10 +64,6 @@ def run(mode: str = "COMPOSITE", filename: str = FILES[-1], wc_display: bool = F
 @click.pass_context
 def hw3(ctx):
     """SoCo Homework III
-
-    Do this first\n
-    Do this next\n
-    Do this last\n
     """
     click.echo("\nSentiment of Influential Users"
                "\n\t\tAuthor: Ivan Leon"
@@ -95,6 +90,7 @@ def demo(ctx):
                   f"\t\tSENTIMENT: \t{user[1]['SENTIMENT']}\n"
                   f"\t\tINFLUENCE: \t{user[1]['INFLUENCE']}")
         print("\n\n")
+
 
 @hw3.command()
 @click.option('-f', '--filename',
