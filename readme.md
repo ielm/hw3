@@ -16,11 +16,7 @@ pip install -r requirements.txt
 
 Unzip data
 ```shell script
-cd data/
-
-unzip nps-chat.zip
-
-cd ..
+cd data && unzip nps-chat.zip && cd ..
 ```
 
 Run demo
