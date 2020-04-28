@@ -9,7 +9,7 @@ data/sample.csv
 
 *.png
 
-_*
+_images/
 
 .DS_STORE
 
